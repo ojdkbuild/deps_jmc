@@ -19,31 +19,41 @@ project ( jmc NONE )
 
 # options
 set ( ${PROJECT_NAME}_JAVA_HOME ${OJDKBUILD_DIR}/tools/jdk8-jmc CACHE STRING "Path to jdk to use for building JMC" )
+set ( ${PROJECT_NAME}_INSTALLER_FEATURE_LEVEL "2" CACHE STRING "MSI Feature 'Level' for 'icedtea_web' component" )
+set ( ${PROJECT_NAME}_INSTALLER_FEATURE_TITLE "Mission Control" CACHE STRING "MSI Feature title for 'jmc' component" )
 
 configure_file ( ${CMAKE_CURRENT_LIST_DIR}/resources/env.bat
         ${CMAKE_CURRENT_BINARY_DIR}/env.bat )
 configure_file ( ${CMAKE_CURRENT_LIST_DIR}/resources/platform-definition-photon.target
         ${OJDKBUILD_DIR}/upstream/jmc/releng/platform-definitions/platform-definition-photon/platform-definition-photon.target )
 
-add_custom_target ( ${PROJECT_NAME}_mvnrepo
-        COMMAND (robocopy ${OJDKBUILD_DIR}/deps/jmc-mvnrepo mvnrepo /e ${openjdk_RBCFLAGS} ) ${openjdk_RBCPOSTFIX}
-        WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR} )
-
-add_custom_target ( ${PROJECT_NAME}_core
-        COMMAND cmd /c
+add_custom_command ( OUTPUT ${OJDKBUILD_DIR}/upstream/jmc/target/products/org.openjdk.jmc/win32/win32/x86_64/jmc.exe
+        # mvnrepo
+        COMMAND (robocopy ${OJDKBUILD_DIR}/deps/jmc-mvnrepo mvnrepo /e /nfl ${openjdk_RBCFLAGS} ) ${openjdk_RBCPOSTFIX}
+        # core
+        COMMAND cd "${OJDKBUILD_DIR}/upstream/jmc/core" && cmd /c
                 ${CMAKE_CURRENT_BINARY_DIR}/env.bat
                 mvn clean install
                 --offline
                 -Dmaven.repo.local=${CMAKE_CURRENT_BINARY_DIR}/mvnrepo
-        DEPENDS ${PROJECT_NAME}_mvnrepo
-        WORKING_DIRECTORY ${OJDKBUILD_DIR}/upstream/jmc/core )
+        # app
+        COMMAND cd ${OJDKBUILD_DIR}/upstream/jmc && cmd /c
+                ${CMAKE_CURRENT_BINARY_DIR}/env.bat
+                mvn clean install
+                --offline
+                -Dmaven.repo.local=${CMAKE_CURRENT_BINARY_DIR}/mvnrepo
+        WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+        COMMENT "Building JDK Mission Control ..." )
+add_custom_target ( ${PROJECT_NAME}_build DEPENDS ${OJDKBUILD_DIR}/upstream/jmc/target/products/org.openjdk.jmc/win32/win32/x86_64/jmc.exe )
 
 add_custom_target ( ${PROJECT_NAME}
-        COMMAND cmd /c
-                ${CMAKE_CURRENT_BINARY_DIR}/env.bat
-                mvn clean install
-                --offline
-                -Dmaven.repo.local=${CMAKE_CURRENT_BINARY_DIR}/mvnrepo
-        DEPENDS ${PROJECT_NAME}_core
-        WORKING_DIRECTORY ${OJDKBUILD_DIR}/upstream/jmc )
+        COMMAND if exist dist rd /s /q dist
+        COMMAND (robocopy ${OJDKBUILD_DIR}/upstream/jmc/target/products/org.openjdk.jmc/win32/win32/x86_64 dist /e /nfl ${openjdk_RBCFLAGS} ) ${openjdk_RBCPOSTFIX}
+        COMMAND (robocopy ${CMAKE_CURRENT_LIST_DIR}/resources dist jmc.ini ${openjdk_RBCFLAGS} ) ${openjdk_RBCPOSTFIX}
+        DEPENDS ${PROJECT_NAME}_build
+        WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+        COMMENT "Building JDK Mission Control distribution at [${CMAKE_CURRENT_BINARY_DIR}/dist] ..." )
 
+# installer
+configure_file ( ${CMAKE_CURRENT_LIST_DIR}/resources/installer.xsl
+        ${CMAKE_CURRENT_BINARY_DIR}/installer.xsl )
