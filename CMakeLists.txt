@@ -21,6 +21,7 @@ project ( jmc NONE )
 set ( ${PROJECT_NAME}_JAVA_HOME ${OJDKBUILD_DIR}/tools/jdk8-jmc CACHE STRING "Path to jdk to use for building JMC" )
 set ( ${PROJECT_NAME}_INSTALLER_FEATURE_LEVEL "2" CACHE STRING "MSI Feature 'Level' for 'icedtea_web' component" )
 set ( ${PROJECT_NAME}_INSTALLER_FEATURE_TITLE "Mission Control" CACHE STRING "MSI Feature title for 'jmc' component" )
+set ( ${PROJECT_NAME}_INSTALLER_FEATURE_DESCRIPTION "JDK Mission Control 7 EARLY ACCESS. This feature is EXPERIMENTAL." CACHE STRING "MSI Feature description for 'jmc' component" )
 
 configure_file ( ${CMAKE_CURRENT_LIST_DIR}/resources/env.bat
         ${CMAKE_CURRENT_BINARY_DIR}/env.bat )
@@ -55,5 +56,9 @@ add_custom_target ( ${PROJECT_NAME}
         COMMENT "Building JDK Mission Control distribution at [${CMAKE_CURRENT_BINARY_DIR}/dist] ..." )
 
 # installer
+configure_file ( ${CMAKE_CURRENT_LIST_DIR}/resources/installer.json
+        ${CMAKE_CURRENT_BINARY_DIR}/installer.json )
 configure_file ( ${CMAKE_CURRENT_LIST_DIR}/resources/installer.xsl
         ${CMAKE_CURRENT_BINARY_DIR}/installer.xsl )
+configure_file ( ${CMAKE_CURRENT_LIST_DIR}/resources/installer_env.xsl
+        ${CMAKE_CURRENT_BINARY_DIR}/installer_env.xsl )

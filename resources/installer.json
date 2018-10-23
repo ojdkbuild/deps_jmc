@@ -1,0 +1,11 @@
+{
+  "installDirName": "missioncontrol",
+  "featureId": "jmc",
+  "featureTitle": "${${PROJECT_NAME}_INSTALLER_FEATURE_TITLE}",
+  "featureDescription": "${${PROJECT_NAME}_INSTALLER_FEATURE_DESCRIPTION}",
+  "featureOptional": true,
+  "featureLevel": 2,
+  "featureDirectoryId": "JMCDIR",
+  "featureConfigurableDirectory": false
+}
+
