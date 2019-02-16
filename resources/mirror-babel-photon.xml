@@ -14,12 +14,18 @@
  See the License for the specific language governing permissions and
  limitations under the License.
 -->
+<!-- java
+        -cp plugins/org.eclipse.equinox.launcher_.jar
+         org.eclipse.equinox.launcher.Main
+         -noupdate
+        -application org.eclipse.ant.core.antRunner
+        -buildfile mirror-babel-photon.xml -->
 <project name="Create Mirror2" default="create-mirror" basedir=".">
     <target name="create-mirror">
-        <p2.mirror source="http://download.eclipse.org/technology/babel/update-site/R0.15.1/oxygen">
-            <destination location="file:/c:/tmp/eclipse/repo_oxygen"/>
-            <iu id="org.eclipse.babel.nls_eclipse_ja.feature.group" version="4.7.0.v20171231020002"/>
-            <iu id="org.eclipse.babel.nls_eclipse_zh.feature.group" version="4.7.0.v20171231020002"/>
+        <p2.mirror source="http://download.eclipse.org/technology/babel/update-site/R0.16.0/photon/">
+            <destination location="file:/c:/tmp/eclipse/repo_babel_photon"/>
+            <iu id="org.eclipse.babel.nls_eclipse_ja.feature.group" version="4.8.0.v20180815020001"/>
+            <iu id="org.eclipse.babel.nls_eclipse_zh.feature.group" version="4.8.0.v20180815020001"/>
             <slicingOptions
                     followStrict="true"
                     includeFeatures="true"

@@ -18,15 +18,23 @@ cmake_minimum_required ( VERSION 2.8.12 )
 project ( jmc NONE )
 
 # options
-set ( ${PROJECT_NAME}_JAVA_HOME ${OJDKBUILD_DIR}/tools/jdk8-jmc CACHE STRING "Path to jdk to use for building JMC" )
 set ( ${PROJECT_NAME}_INSTALLER_FEATURE_LEVEL "2" CACHE STRING "MSI Feature 'Level' for 'icedtea_web' component" )
 set ( ${PROJECT_NAME}_INSTALLER_FEATURE_TITLE "Mission Control" CACHE STRING "MSI Feature title for 'jmc' component" )
 set ( ${PROJECT_NAME}_INSTALLER_FEATURE_DESCRIPTION "JDK Mission Control 7 EARLY ACCESS. This feature is EXPERIMENTAL." CACHE STRING "MSI Feature description for 'jmc' component" )
 
+option ( ${PROJECT_NAME}_ENABLE_STANDALONE "Build JMC without building JDK" OFF )
+
 configure_file ( ${CMAKE_CURRENT_LIST_DIR}/resources/env.bat
         ${CMAKE_CURRENT_BINARY_DIR}/env.bat )
+configure_file ( ${CMAKE_CURRENT_LIST_DIR}/resources/jmc.product
+        ${OJDKBUILD_DIR}/upstream/jmc/application/org.openjdk.jmc.rcp.product/jmc.product )
 configure_file ( ${CMAKE_CURRENT_LIST_DIR}/resources/platform-definition-photon.target
         ${OJDKBUILD_DIR}/upstream/jmc/releng/platform-definitions/platform-definition-photon/platform-definition-photon.target )
+
+add_custom_target ( ${PROJECT_NAME}_buildjdk )
+if ( NOT ${PROJECT_NAME}_ENABLE_STANDALONE )
+    add_dependencies ( ${PROJECT_NAME}_buildjdk image )
+endif ( )
 
 add_custom_command ( OUTPUT ${OJDKBUILD_DIR}/upstream/jmc/target/products/org.openjdk.jmc/win32/win32/x86_64/jmc.exe
         # mvnrepo
@@ -40,9 +48,10 @@ add_custom_command ( OUTPUT ${OJDKBUILD_DIR}/upstream/jmc/target/products/org.op
         # app
         COMMAND cd ${OJDKBUILD_DIR}/upstream/jmc && cmd /c
                 ${CMAKE_CURRENT_BINARY_DIR}/env.bat
-                mvn clean install
+                mvn clean package
                 --offline
                 -Dmaven.repo.local=${CMAKE_CURRENT_BINARY_DIR}/mvnrepo
+        DEPENDS ${PROJECT_NAME}_buildjdk
         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
         COMMENT "Building JDK Mission Control ..." )
 add_custom_target ( ${PROJECT_NAME}_build DEPENDS ${OJDKBUILD_DIR}/upstream/jmc/target/products/org.openjdk.jmc/win32/win32/x86_64/jmc.exe )
@@ -50,7 +59,6 @@ add_custom_target ( ${PROJECT_NAME}_build DEPENDS ${OJDKBUILD_DIR}/upstream/jmc/
 add_custom_target ( ${PROJECT_NAME}
         COMMAND if exist dist rd /s /q dist
         COMMAND (robocopy ${OJDKBUILD_DIR}/upstream/jmc/target/products/org.openjdk.jmc/win32/win32/x86_64 dist /e /nfl ${openjdk_RBCFLAGS} ) ${openjdk_RBCPOSTFIX}
-        COMMAND (robocopy ${CMAKE_CURRENT_LIST_DIR}/resources dist jmc.ini ${openjdk_RBCFLAGS} ) ${openjdk_RBCPOSTFIX}
         DEPENDS ${PROJECT_NAME}_build
         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
         COMMENT "Building JDK Mission Control distribution at [${CMAKE_CURRENT_BINARY_DIR}/dist] ..." )
