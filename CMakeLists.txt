@@ -20,7 +20,7 @@ project ( jmc NONE )
 # options
 set ( ${PROJECT_NAME}_INSTALLER_FEATURE_LEVEL "2" CACHE STRING "MSI Feature 'Level' for 'icedtea_web' component" )
 set ( ${PROJECT_NAME}_INSTALLER_FEATURE_TITLE "Mission Control" CACHE STRING "MSI Feature title for 'jmc' component" )
-set ( ${PROJECT_NAME}_INSTALLER_FEATURE_DESCRIPTION "JDK Mission Control 7 EARLY ACCESS. This feature is EXPERIMENTAL." CACHE STRING "MSI Feature description for 'jmc' component" )
+set ( ${PROJECT_NAME}_INSTALLER_FEATURE_DESCRIPTION "JDK Mission Control." CACHE STRING "MSI Feature description for 'jmc' component" )
 
 option ( ${PROJECT_NAME}_ENABLE_STANDALONE "Build JMC without building JDK" OFF )
 

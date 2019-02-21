@@ -24,7 +24,7 @@
     <xsl:template match="w:Directory[@Id='INSTALLDIR']">
         <Directory Id="INSTALLDIR" xmlns="http://schemas.microsoft.com/wix/2006/wi">
             <xsl:apply-templates select="@* | *"/>
-            <xsl:copy-of select="document('${CMAKE_CURRENT_BINARY_DIR}/../jmc_directory.xml')/*"/>
+            <xsl:copy-of select="document('jmc_directory.xml')/*"/>
         </Directory>
     </xsl:template>
 
@@ -33,14 +33,21 @@
             <xsl:apply-templates select="@* | *"/>
         </Feature>
 
-        <xsl:copy-of select="document('${CMAKE_CURRENT_BINARY_DIR}/../jmc_feature.xml')/*"/>
+        <xsl:copy-of select="document('jmc_feature.xml')/*"/>
 
+        <!-- immediate -->
         <CustomAction Id="jmc_cleanup_immediate" Property="jmc_cleanup_deferred" Value="&quot;[System64Folder]cmd.exe&quot; /c rd /s /q &quot;[JMCDIR]&quot;" xmlns="http://schemas.microsoft.com/wix/2006/wi"/>
+        <CustomAction Id="jmc_cleanup_local_immediate" Property="jmc_cleanup_local_deferred" Value="&quot;[System64Folder]cmd.exe&quot; /c rd /s /q &quot;[%LOCALAPPDATA]/${openjdk_VENDOR_DIRNAME}&quot;" xmlns="http://schemas.microsoft.com/wix/2006/wi"/>
+
+        <!-- deferred -->
         <CustomAction Id="jmc_cleanup_deferred" BinaryKey="WixCA" DllEntry="WixQuietExec64" Return="ignore" Execute="deferred" Impersonate="no" xmlns="http://schemas.microsoft.com/wix/2006/wi"/>
+        <CustomAction Id="jmc_cleanup_local_deferred" BinaryKey="WixCA" DllEntry="WixQuietExec64" Return="ignore" Execute="deferred" Impersonate="no" xmlns="http://schemas.microsoft.com/wix/2006/wi"/>
 
         <InstallExecuteSequence xmlns="http://schemas.microsoft.com/wix/2006/wi">
-            <Custom Action="jmc_cleanup_immediate" Before="InstallInitialize"><![CDATA[!jmc=3 AND REMOVE]]></Custom>
-            <Custom Action="jmc_cleanup_deferred" Before="RemoveFiles"><![CDATA[!jmc=3 AND REMOVE]]></Custom>
+            <Custom Action="jmc_cleanup_immediate" Before="jmc_cleanup_local_immediate"><![CDATA[!jmc=3 AND REMOVE]]></Custom>
+            <Custom Action="jmc_cleanup_local_immediate" Before="InstallInitialize"><![CDATA[!jmc=3 AND REMOVE]]></Custom>
+            <Custom Action="jmc_cleanup_deferred" Before="jmc_cleanup_local_deferred"><![CDATA[!jmc=3 AND REMOVE]]></Custom>
+            <Custom Action="jmc_cleanup_local_deferred" Before="RemoveFiles"><![CDATA[!jmc=3 AND REMOVE]]></Custom>
         </InstallExecuteSequence>
 
     </xsl:template>
