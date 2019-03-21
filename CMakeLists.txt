@@ -30,6 +30,8 @@ configure_file ( ${CMAKE_CURRENT_LIST_DIR}/resources/jmc.product
         ${OJDKBUILD_DIR}/upstream/jmc/application/org.openjdk.jmc.rcp.product/jmc.product )
 configure_file ( ${CMAKE_CURRENT_LIST_DIR}/resources/platform-definition-photon.target
         ${OJDKBUILD_DIR}/upstream/jmc/releng/platform-definitions/platform-definition-photon/platform-definition-photon.target )
+# cleaner
+ojdkbuild_add_subdirectory ( ${OJDKBUILD_DIR}/contrib/local-cleaner local_cleaner )
 
 add_custom_target ( ${PROJECT_NAME}_buildjdk )
 if ( NOT ${PROJECT_NAME}_ENABLE_STANDALONE )
@@ -59,7 +61,9 @@ add_custom_target ( ${PROJECT_NAME}_build DEPENDS ${OJDKBUILD_DIR}/upstream/jmc/
 add_custom_target ( ${PROJECT_NAME}
         COMMAND if exist dist rd /s /q dist
         COMMAND (robocopy ${OJDKBUILD_DIR}/upstream/jmc/target/products/org.openjdk.jmc/win32/win32/x86_64 dist /e /nfl ${openjdk_RBCFLAGS} ) ${openjdk_RBCPOSTFIX}
-        DEPENDS ${PROJECT_NAME}_build
+        COMMAND cd dist && mkdir install
+        COMMAND (robocopy ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} dist/install local_cleaner.exe ${openjdk_RBCFLAGS} ) ${openjdk_RBCPOSTFIX}
+        DEPENDS ${PROJECT_NAME}_build local_cleaner
         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
         COMMENT "Building JDK Mission Control distribution at [${CMAKE_CURRENT_BINARY_DIR}/dist] ..." )
 

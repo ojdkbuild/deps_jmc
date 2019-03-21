@@ -35,19 +35,22 @@
 
         <xsl:copy-of select="document('jmc_feature.xml')/*"/>
 
-        <!-- immediate -->
-        <CustomAction Id="jmc_cleanup_immediate" Property="jmc_cleanup_deferred" Value="&quot;[System64Folder]cmd.exe&quot; /c rd /s /q &quot;[JMCDIR]&quot;" xmlns="http://schemas.microsoft.com/wix/2006/wi"/>
-        <CustomAction Id="jmc_cleanup_local_immediate" Property="jmc_cleanup_local_deferred" Value="&quot;[System64Folder]cmd.exe&quot; /c rd /s /q &quot;[%LOCALAPPDATA]/${openjdk_VENDOR_DIRNAME}&quot;" xmlns="http://schemas.microsoft.com/wix/2006/wi"/>
-
-        <!-- deferred -->
-        <CustomAction Id="jmc_cleanup_deferred" BinaryKey="WixCA" DllEntry="WixQuietExec64" Return="ignore" Execute="deferred" Impersonate="no" xmlns="http://schemas.microsoft.com/wix/2006/wi"/>
-        <CustomAction Id="jmc_cleanup_local_deferred" BinaryKey="WixCA" DllEntry="WixQuietExec64" Return="ignore" Execute="deferred" Impersonate="no" xmlns="http://schemas.microsoft.com/wix/2006/wi"/>
+        <!-- impersonated -->
+        <CustomAction Id="jmc_cleanup_impersonated_misssioncontrol_prop" Property="WixQuietExec64CmdLine" Value="&quot;[JMCDIR]install\local_cleaner.exe&quot; -d &quot;${openjdk_VENDOR_DIRNAME}/${openjdk_IMAGE}/missioncontrol&quot;" xmlns="http://schemas.microsoft.com/wix/2006/wi"/>
+        <CustomAction Id="jmc_cleanup_impersonated_misssioncontrol" BinaryKey="WixCA" DllEntry="WixQuietExec64" Return="ignore" xmlns="http://schemas.microsoft.com/wix/2006/wi"/>
+        <CustomAction Id="jmc_cleanup_impersonated_image_prop" Property="WixQuietExec64CmdLine" Value="&quot;[JMCDIR]install\local_cleaner.exe&quot; -e -d &quot;${openjdk_VENDOR_DIRNAME}/${openjdk_IMAGE}&quot;" xmlns="http://schemas.microsoft.com/wix/2006/wi"/>
+        <CustomAction Id="jmc_cleanup_impersonated_image" BinaryKey="WixCA" DllEntry="WixQuietExec64" Return="ignore" xmlns="http://schemas.microsoft.com/wix/2006/wi"/>
+        <CustomAction Id="jmc_cleanup_impersonated_vendor_prop" Property="WixQuietExec64CmdLine" Value="&quot;[JMCDIR]install\local_cleaner.exe&quot; -e -d &quot;${openjdk_VENDOR_DIRNAME}&quot;" xmlns="http://schemas.microsoft.com/wix/2006/wi"/>
+        <CustomAction Id="jmc_cleanup_impersonated_vendor" BinaryKey="WixCA" DllEntry="WixQuietExec64" Return="ignore" xmlns="http://schemas.microsoft.com/wix/2006/wi"/>
 
         <InstallExecuteSequence xmlns="http://schemas.microsoft.com/wix/2006/wi">
-            <Custom Action="jmc_cleanup_immediate" Before="jmc_cleanup_local_immediate"><![CDATA[!jmc=3 AND REMOVE]]></Custom>
-            <Custom Action="jmc_cleanup_local_immediate" Before="InstallInitialize"><![CDATA[!jmc=3 AND REMOVE]]></Custom>
-            <Custom Action="jmc_cleanup_deferred" Before="jmc_cleanup_local_deferred"><![CDATA[!jmc=3 AND REMOVE]]></Custom>
-            <Custom Action="jmc_cleanup_local_deferred" Before="RemoveFiles"><![CDATA[!jmc=3 AND REMOVE]]></Custom>
+            <!-- impersonated -->
+            <Custom Action="jmc_cleanup_impersonated_misssioncontrol_prop" Before="jmc_cleanup_impersonated_misssioncontrol"><![CDATA[!jmc=3 AND REMOVE]]></Custom>
+            <Custom Action="jmc_cleanup_impersonated_misssioncontrol" Before="jmc_cleanup_impersonated_image_prop"><![CDATA[!jmc=3 AND REMOVE]]></Custom>
+            <Custom Action="jmc_cleanup_impersonated_image_prop" Before="jmc_cleanup_impersonated_image"><![CDATA[!jmc=3 AND REMOVE]]></Custom>
+            <Custom Action="jmc_cleanup_impersonated_image" Before="jmc_cleanup_impersonated_vendor_prop"><![CDATA[!jmc=3 AND REMOVE]]></Custom>
+            <Custom Action="jmc_cleanup_impersonated_vendor_prop" Before="jmc_cleanup_impersonated_vendor"><![CDATA[!jmc=3 AND REMOVE]]></Custom>
+            <Custom Action="jmc_cleanup_impersonated_vendor" Before="RemoveFiles"><![CDATA[!jmc=3 AND REMOVE]]></Custom>
         </InstallExecuteSequence>
 
     </xsl:template>
