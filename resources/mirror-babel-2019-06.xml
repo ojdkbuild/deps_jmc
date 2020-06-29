@@ -22,10 +22,14 @@
         -buildfile mirror-babel-photon.xml -->
 <project name="Create Mirror2" default="create-mirror" basedir=".">
     <target name="create-mirror">
-        <p2.mirror source="http://download.eclipse.org/technology/babel/update-site/R0.16.0/photon/">
-            <destination location="file:/c:/tmp/eclipse/repo_babel_photon"/>
-            <iu id="org.eclipse.babel.nls_eclipse_ja.feature.group" version="4.8.0.v20180815020001"/>
-            <iu id="org.eclipse.babel.nls_eclipse_zh.feature.group" version="4.8.0.v20180815020001"/>
+        <p2.mirror source="https://archive.eclipse.org/technology/babel/update-site/R0.17.0/2019-06/">
+            <destination location="file:/C:/tmp/p2/jmc-p2repo-babel-2019-06/"/>
+            <iu id="org.eclipse.babel.nls_eclipse_ja.feature.group" version="4.12.0.v20190713060001"/>
+            <iu id="org.eclipse.babel.nls_eclipse_zh.feature.group" version="4.12.0.v20190713060001"/>
+            <!--
+            <iu id="" version=""/>
+            -->
+            
             <slicingOptions
                     followStrict="true"
                     includeFeatures="true"

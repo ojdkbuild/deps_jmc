@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ Copyright 2016 Red Hat, Inc.
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+ http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-->
+<!-- java
+        -cp plugins/org.eclipse.equinox.launcher_.jar
+         org.eclipse.equinox.launcher.Main
+         -noupdate
+        -application org.eclipse.ant.core.antRunner
+        -buildfile mirror-babel-photon.xml -->
+<project name="Create Mirror2" default="create-mirror" basedir=".">
+    <target name="create-mirror">
+        <p2.mirror source="http://download.eclipse.org/releases/2019-09/">
+            <destination location="file:/C:/tmp/p2/jmc-p2repo-2019-09/"/>
+            <iu id="org.eclipse.equinox.executable.feature.group" version="3.8.500.v20190907-0428"/>
+            <iu id="org.eclipse.pde.feature.group" version="3.14.100.v20190916-1045"/>
+            <iu id="org.eclipse.platform.sdk" version="4.13.0.I20190916-1045"/>
+            <iu id="org.eclipse.jdt.feature.group" version="3.18.100.v20190916-1045"/>
+            <iu id="org.eclipse.ecf.core.feature.feature.group" version="1.5.3.v20190423-0625"/>
+            <iu id="org.eclipse.equinox.p2.core.feature.feature.group" version="1.6.300.v20190903-0934"/>
+            <iu id="org.eclipse.equinox.p2.user.ui.feature.group" version="2.4.500.v20190903-0934"/>
+            <iu id="org.eclipse.equinox.p2.user.ui.source.feature.group" version="2.4.500.v20190903-0934"/>
+            <iu id="org.eclipse.ecf.core.ssl.feature.feature.group" version="1.1.200.v20190502-0212"/>
+            <iu id="org.eclipse.ecf.filetransfer.feature.feature.group" version="3.14.5.v20190423-0614"/>
+            <iu id="org.eclipse.ecf.filetransfer.httpclient45.feature.feature.group" version="1.0.0.v20190530-1947"/>
+            <iu id="org.eclipse.ecf.filetransfer.ssl.feature.feature.group" version="1.1.100.v20180301-0132"/>
+            <iu id="org.eclipse.emf.common.feature.group" version="2.16.0.v20190625-1131"/>
+            <iu id="org.eclipse.emf.ecore.feature.group" version="2.19.0.v20190822-1451"/>
+            <!--
+            <iu id="" version=""/>
+            -->
+            
+            <slicingOptions
+                    followStrict="true"
+                    includeFeatures="true"
+                    includeNonGreedy="true"
+                    includeOptional="false"
+            />
+        </p2.mirror>
+    </target>
+</project>

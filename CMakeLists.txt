@@ -28,8 +28,8 @@ configure_file ( ${CMAKE_CURRENT_LIST_DIR}/resources/env.bat
         ${CMAKE_CURRENT_BINARY_DIR}/env.bat )
 configure_file ( ${CMAKE_CURRENT_LIST_DIR}/resources/jmc.product
         ${OJDKBUILD_DIR}/upstream/jmc/application/org.openjdk.jmc.rcp.product/jmc.product )
-configure_file ( ${CMAKE_CURRENT_LIST_DIR}/resources/platform-definition-photon.target
-        ${OJDKBUILD_DIR}/upstream/jmc/releng/platform-definitions/platform-definition-photon/platform-definition-photon.target )
+configure_file ( ${CMAKE_CURRENT_LIST_DIR}/resources/platform-definition-2019-09.target
+        ${OJDKBUILD_DIR}/upstream/jmc/releng/platform-definitions/platform-definition-2019-09/platform-definition-2019-09.target )
 # cleaner
 ojdkbuild_add_subdirectory ( ${OJDKBUILD_DIR}/contrib/local-cleaner local_cleaner )
 
@@ -39,20 +39,18 @@ if ( NOT ${PROJECT_NAME}_ENABLE_STANDALONE )
 endif ( )
 
 add_custom_command ( OUTPUT ${OJDKBUILD_DIR}/upstream/jmc/target/products/org.openjdk.jmc/win32/win32/x86_64/jmc.exe
-        # mvnrepo
-        COMMAND (robocopy ${OJDKBUILD_DIR}/deps/jmc-mvnrepo mvnrepo /e /nfl ${openjdk_RBCFLAGS} ) ${openjdk_RBCPOSTFIX}
         # core
         COMMAND cd "${OJDKBUILD_DIR}/upstream/jmc/core" && cmd /c
                 ${CMAKE_CURRENT_BINARY_DIR}/env.bat
                 mvn clean install
                 --offline
-                -Dmaven.repo.local=${CMAKE_CURRENT_BINARY_DIR}/mvnrepo
+                -Dmaven.repo.local=${OJDKBUILD_DIR}/deps/jmc-mvnrepo
         # app
         COMMAND cd ${OJDKBUILD_DIR}/upstream/jmc && cmd /c
                 ${CMAKE_CURRENT_BINARY_DIR}/env.bat
                 mvn clean package
                 --offline
-                -Dmaven.repo.local=${CMAKE_CURRENT_BINARY_DIR}/mvnrepo
+                -Dmaven.repo.local=${OJDKBUILD_DIR}/deps/jmc-mvnrepo
         DEPENDS ${PROJECT_NAME}_buildjdk
         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
         COMMENT "Building JDK Mission Control ..." )
