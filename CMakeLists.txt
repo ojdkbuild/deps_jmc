@@ -63,6 +63,8 @@ add_custom_target ( ${PROJECT_NAME}
         COMMAND (robocopy ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} dist/install local_cleaner.exe ${openjdk_RBCFLAGS} ) ${openjdk_RBCPOSTFIX}
         COMMAND if exist ${${PROJECT_NAME}_JAVA_HOME}/bin/msvcp140.dll
                 (robocopy ${${PROJECT_NAME}_JAVA_HOME}/bin dist msvcp140.dll ${openjdk_RBCFLAGS} ) ${openjdk_RBCPOSTFIX}
+        COMMAND if exist ${${PROJECT_NAME}_JAVA_HOME}/jre/bin/msvcp140.dll
+                (robocopy ${${PROJECT_NAME}_JAVA_HOME}/jre/bin dist msvcp140.dll ${openjdk_RBCFLAGS} ) ${openjdk_RBCPOSTFIX}
         DEPENDS ${PROJECT_NAME}_build local_cleaner
         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
         COMMENT "Building JDK Mission Control distribution at [${CMAKE_CURRENT_BINARY_DIR}/dist] ..." )
