@@ -14,4 +14,5 @@ rem See the License for the specific language governing permissions and
 rem limitations under the License.
 
 set JAVA_HOME=${${PROJECT_NAME}_JAVA_HOME}
+set MAVEN_OPTS=-Djdk.io.File.enableADS
 %*
